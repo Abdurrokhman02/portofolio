@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import profileImg from "./assets/profile.jpg";
+import { image } from "framer-motion/client";
 
 // ── PALETTE ──────────────────────────────────────────────────────────────────
 const C = {
@@ -88,101 +90,105 @@ function FallingCode() {
   );
 }
 
-// ── ROBOT SVG MASCOT ──────────────────────────────────────────────────────────
-function RobotMascot({ scrollY }) {
-  const y = useTransform(scrollY, [0, 600], [0, -80]);
-  const rotate = useTransform(scrollY, [0, 600], [0, 12]);
-  const [blink, setBlink] = useState(false);
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setBlink(true);
-      setTimeout(() => setBlink(false), 150);
-    }, 3000 + Math.random() * 2000);
-    return () => clearInterval(t);
-  }, []);
+// ── PROFILE HUD ──────────────────────────────────────────────
+function ProfileHUD({ scrollY }) {
+  const y = useTransform(scrollY, [0, 600], [0, -40]);
 
   return (
-    <motion.div style={{ y, rotate, originX: 0.5, originY: 1 }} animate={{ y: [0, -10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}>
-      <svg width="220" height="260" viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1A2535" />
-            <stop offset="100%" stopColor="#0A1520" />
-          </linearGradient>
-        </defs>
+    <motion.div 
+      // Ukuran container dibesarkan dari 320 ke 440
+      style={{ y, position: "relative", width: 440, height: 440, display: "flex", alignItems: "center", justifyContent: "center" }}
+    >
+      {/* 1. LINGKARAN ANIMASI SVG (HUD RINGS) */}
+      {/* viewBox disesuaikan ke 440 */}
+      <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} viewBox="0 0 440 440">
+        
+        {/* Ring Luar */}
+        <motion.circle
+          cx="220" cy="220" r="200" // cx, cy disesuaikan jadi nilai tengah (440/2), radius (r) dibesarkan
+          fill="none" stroke={C.cyanDim} strokeWidth="1.5" strokeDasharray="6 18"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          style={{ originX: "50%", originY: "50%" }}
+        />
+        
+        {/* Ring Tengah */}
+        <motion.circle
+          cx="220" cy="220" r="180"
+          fill="none" stroke={C.cyan} strokeWidth="3" strokeDasharray="100 50 30 50"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          style={{ originX: "50%", originY: "50%", filter: "drop-shadow(0 0 8px rgba(0,245,255,0.5))" }}
+        />
+        
+        {/* Ring Dalam */}
+        <motion.circle
+          cx="220" cy="220" r="160"
+          fill="none" stroke={C.green} strokeWidth="1.5" strokeDasharray="200 40"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          style={{ originX: "50%", originY: "50%" }}
+        />
 
-        {/* Antenna */}
-        <line x1="110" y1="8" x2="110" y2="40" stroke={C.cyan} strokeWidth="2" />
-        <motion.circle cx="110" cy="6" r="5" fill={C.cyan} animate={{ opacity: [1, 0.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }} filter="url(#glow)" />
-
-        {/* Head */}
-        <rect x="65" y="40" width="90" height="72" rx="8" fill="url(#bodyGrad)" stroke={C.cyan} strokeWidth="1.5" />
-        <rect x="73" y="48" width="74" height="56" rx="4" fill="#030A12" stroke={C.cyanDim} strokeWidth="0.8" />
-
-        {/* Eyes */}
-        {blink ? (
-          <>
-            <rect x="84" y="66" width="18" height="2" rx="1" fill={C.cyan} />
-            <rect x="118" y="66" width="18" height="2" rx="1" fill={C.cyan} />
-          </>
-        ) : (
-          <>
-            <motion.rect x="84" y="58" width="18" height="18" rx="3" fill={C.cyan} animate={{ opacity: [1, 0.6, 1] }} transition={{ duration: 2, repeat: Infinity }} filter="url(#glow)" />
-            <motion.rect x="118" y="58" width="18" height="18" rx="3" fill={C.cyan} animate={{ opacity: [1, 0.6, 1] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} filter="url(#glow)" />
-            <rect x="88" y="62" width="6" height="6" rx="1" fill="#030A12" />
-            <rect x="122" y="62" width="6" height="6" rx="1" fill="#030A12" />
-          </>
-        )}
-
-        {/* Mouth display */}
-        <rect x="84" y="84" width="52" height="12" rx="3" fill="#030A12" stroke={C.cyanDim} strokeWidth="0.8" />
-        <motion.rect x="87" y="87" width="8" height="6" rx="1" fill={C.green} animate={{ scaleX: [1, 1.4, 0.8, 1.2, 1] }} transition={{ duration: 0.8, repeat: Infinity }} />
-        <motion.rect x="98" y="87" width="8" height="6" rx="1" fill={C.green} animate={{ scaleX: [1, 0.8, 1.4, 1, 0.9] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.1 }} />
-        <motion.rect x="109" y="87" width="8" height="6" rx="1" fill={C.green} animate={{ scaleX: [1, 1.2, 1, 1.5, 0.8] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.2 }} />
-        <motion.rect x="120" y="87" width="8" height="6" rx="1" fill={C.green} animate={{ scaleX: [0.8, 1, 1.3, 0.9, 1.2] }} transition={{ duration: 0.8, repeat: Infinity, delay: 0.3 }} />
-
-        {/* Neck */}
-        <rect x="100" y="112" width="20" height="14" rx="2" fill={C.grey} stroke={C.cyanDim} strokeWidth="0.8" />
-
-        {/* Body */}
-        <rect x="50" y="126" width="120" height="90" rx="10" fill="url(#bodyGrad)" stroke={C.cyan} strokeWidth="1.5" />
-        <rect x="63" y="138" width="40" height="30" rx="4" fill="#030A12" stroke={C.cyanDim} strokeWidth="0.8" />
-        <motion.circle cx="83" cy="153" r="8" fill="none" stroke={C.cyan} strokeWidth="1.5" animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} />
-        <circle cx="83" cy="153" r="3" fill={C.cyan} />
-
-        {/* Body display */}
-        <rect x="115" y="136" width="45" height="34" rx="4" fill="#030A12" stroke={C.cyanDim} strokeWidth="0.8" />
-        {[0,1,2,3].map(i => (
-          <motion.rect key={i} x={118} y={140 + i * 7} width={Math.random() * 20 + 15} height={4} rx={1} fill={C.cyan} style={{ opacity: 0.6 }} animate={{ width: [20, 35, 15, 30, 20] }} transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }} />
-        ))}
-
-        {/* Chest bolts */}
-        {[[58,128],[162,128],[58,208],[162,208]].map(([cx, cy], i) => (
-          <circle key={i} cx={cx} cy={cy} r="4" fill={C.grey} stroke={C.cyanDim} strokeWidth="1" />
-        ))}
-
-        {/* Arms */}
-        <rect x="14" y="130" width="30" height="60" rx="8" fill="url(#bodyGrad)" stroke={C.cyan} strokeWidth="1.5" />
-        <rect x="176" y="130" width="30" height="60" rx="8" fill="url(#bodyGrad)" stroke={C.cyan} strokeWidth="1.5" />
-        <rect x="14" y="186" width="30" height="20" rx="5" fill={C.grey} stroke={C.cyanDim} strokeWidth="1" />
-        <rect x="176" y="186" width="30" height="20" rx="5" fill={C.grey} stroke={C.cyanDim} strokeWidth="1" />
-
-        {/* Legs */}
-        <rect x="70" y="216" width="32" height="40" rx="6" fill="url(#bodyGrad)" stroke={C.cyan} strokeWidth="1.5" />
-        <rect x="118" y="216" width="32" height="40" rx="6" fill="url(#bodyGrad)" stroke={C.cyan} strokeWidth="1.5" />
-        <rect x="65" y="250" width="42" height="10" rx="5" fill={C.grey} stroke={C.cyanDim} strokeWidth="1" />
-        <rect x="113" y="250" width="42" height="10" rx="5" fill={C.grey} stroke={C.cyanDim} strokeWidth="1" />
-
-        {/* Scan line */}
-        <motion.line x1="50" y1="0" x2="170" y2="0" stroke={C.cyan} strokeWidth="1" opacity="0.4"
-          animate={{ y1: [40, 215, 40], y2: [40, 215, 40] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }} />
+        {/* Garis Crosshair / Pembidik Statis (Koordinat disesuaikan) */}
+        <path 
+          d="M 220 0 L 220 20 M 220 420 L 220 440 M 0 220 L 20 220 M 420 220 L 440 220" 
+          stroke={C.cyan} strokeWidth="2" 
+        />
       </svg>
+
+      {/* 2. BINGKAI FOTO & FOTOMU */}
+      <div style={{
+        position: "relative",
+        width: 290, // Ukuran fotomu dibesarkan dari 210 ke 290
+        height: 290, // Ukuran fotomu dibesarkan
+        borderRadius: "50%",
+        overflow: "hidden",
+        border: `3px solid ${C.cyan}`,
+        boxShadow: `0 0 25px ${C.cyanGlow}, inset 0 0 20px ${C.cyanGlow}`,
+        background: C.bgAlt 
+      }}>
+        <img 
+          src={profileImg} 
+          alt="Profile" 
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            filter: "contrast(110%) brightness(0.9)"
+          }} 
+        />
+        
+        {/* Garis Scanline */}
+        <motion.div
+          animate={{ top: ["-10%", "110%"] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          style={{
+            position: "absolute",
+            left: 0, right: 0, height: "3px",
+            background: "linear-gradient(to bottom, transparent, rgba(0,245,255,0.8), transparent)",
+            boxShadow: "0 0 12px rgba(0,245,255,0.6)",
+            zIndex: 10
+          }}
+        />
+      </div>
+
+      {/* 3. TEKS STATUS HUD (Posisi disesuaikan sedikit karena ukuran berubah) */}
+      <motion.div 
+        animate={{ opacity: [0.4, 1, 0.4] }} 
+        transition={{ duration: 2, repeat: Infinity }}
+        style={{ position: "absolute", right: -20, top: 50, background: "rgba(5,10,15,0.8)", border: `1px solid ${C.cyanDim}`, padding: "4px 8px", fontSize: 10, color: C.cyan, fontFamily: "monospace", letterSpacing: 2 }}
+      >
+        SYS.ACTIVE
+      </motion.div>
+      
+      <motion.div 
+        animate={{ opacity: [0.8, 0.2, 0.8] }} 
+        transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+        style={{ position: "absolute", left: -30, bottom: 80, background: "rgba(5,10,15,0.8)", border: `1px solid ${C.green}`, padding: "4px 8px", fontSize: 10, color: C.green, fontFamily: "monospace", letterSpacing: 2 }}
+      >
+        TARGET_LOCK
+      </motion.div>
     </motion.div>
   );
 }
@@ -243,9 +249,9 @@ function ProjectCard({ mission }) {
     <motion.div
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
-      style={{ position: "relative", overflow: "hidden", cursor: "crosshair" }}
+      style={{ position: "relative", overflow: "hidden", cursor: "crosshair", height: "100%" }} /* <-- Tambah height 100% */
     >
-      <PlateBox style={{ height: "100%", minHeight: 220 }}>
+      <PlateBox style={{ height: "100%", minHeight: 220, display: "flex", flexDirection: "column", boxSizing: "border-box" }}>
         {/* Scan line */}
         <AnimatePresence>
           {scanning && (
@@ -259,33 +265,69 @@ function ProjectCard({ mission }) {
           )}
         </AnimatePresence>
 
-        {/* Status badge */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-          <motion.span
-            animate={glitching ? { x: [0, -2, 3, -1, 0], opacity: [1, 0.6, 1, 0.8, 1] } : {}}
-            transition={{ duration: 0.15, repeat: glitching ? 3 : 0 }}
-            style={{ fontSize: 10, letterSpacing: 3, color: C.cyanDim, fontFamily: "monospace", textTransform: "uppercase" }}
+        {/* Bungkus konten atas agar bisa mendorong tags ke bawah */}
+        <div style={{ flexGrow: 1 }}>
+          {/* Status badge */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+            <motion.span
+              animate={glitching ? { x: [0, -2, 3, -1, 0], opacity: [1, 0.6, 1, 0.8, 1] } : {}}
+              transition={{ duration: 0.15, repeat: glitching ? 3 : 0 }}
+              style={{ fontSize: 10, letterSpacing: 3, color: C.cyanDim, fontFamily: "monospace", textTransform: "uppercase" }}
+            >
+              {mission.status}
+            </motion.span>
+            <motion.div
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.2, repeat: Infinity }}
+              style={{ width: 6, height: 6, borderRadius: "50%", background: mission.status === "ACTIVE" ? C.green : C.amber }}
+            />
+          </div>
+
+          {/* --- BAGIAN GAMBAR --- */}
+          {mission.image && (
+            <div style={{ 
+              position: "relative", 
+              marginBottom: "1.25rem", 
+              height: "140px", 
+              overflow: "hidden", 
+              border: `1px solid ${scanning ? C.cyan : C.greyMid}`,
+              borderRadius: "2px"
+            }}>
+              <img 
+                src={mission.image} 
+                alt={mission.title} 
+                style={{ 
+                  width: "100%", 
+                  height: "100%", 
+                  objectFit: "cover", 
+                  display: "block",
+                  transition: "all 0.5s ease",
+                  filter: scanning ? "grayscale(0%)" : "grayscale(100%) sepia(100%) hue-rotate(150deg) brightness(0.6) contrast(1.2)",
+                  transform: scanning ? "scale(1.05)" : "scale(1)"
+                }} 
+              />
+              <div style={{
+                position: "absolute",
+                inset: 0,
+                background: "repeating-linear-gradient(transparent, transparent 2px, rgba(0, 0, 0, 0.15) 3px, rgba(0, 0, 0, 0.15) 3px)",
+                pointerEvents: "none"
+              }} />
+            </div>
+          )}
+
+          <motion.h3
+            animate={glitching ? { x: [0, 3, -2, 1, 0], skewX: [0, 5, -3, 0] } : {}}
+            transition={{ duration: 0.12, repeat: glitching ? 4 : 0 }}
+            style={{ fontSize: 16, fontWeight: 600, color: C.white, marginBottom: "0.5rem", fontFamily: "monospace", letterSpacing: 1 }}
           >
-            {mission.status}
-          </motion.span>
-          <motion.div
-            animate={{ opacity: [1, 0.3, 1] }}
-            transition={{ duration: 1.2, repeat: Infinity }}
-            style={{ width: 6, height: 6, borderRadius: "50%", background: mission.status === "ACTIVE" ? C.green : C.amber }}
-          />
+            {mission.title}
+          </motion.h3>
+
+          <p style={{ fontSize: 13, color: C.textDim, lineHeight: 1.6, marginBottom: "1.5rem" }}>{mission.description}</p>
         </div>
 
-        <motion.h3
-          animate={glitching ? { x: [0, 3, -2, 1, 0], skewX: [0, 5, -3, 0] } : {}}
-          transition={{ duration: 0.12, repeat: glitching ? 4 : 0 }}
-          style={{ fontSize: 16, fontWeight: 600, color: C.white, marginBottom: "0.5rem", fontFamily: "monospace", letterSpacing: 1 }}
-        >
-          {mission.title}
-        </motion.h3>
-
-        <p style={{ fontSize: 13, color: C.textDim, lineHeight: 1.6, marginBottom: "1rem" }}>{mission.description}</p>
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {/* Tags, dipaksa turun ke bawah dengan marginTop: "auto" */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: "auto" }}>
           {mission.tags.map(tag => (
             <span key={tag} style={{ fontSize: 10, padding: "3px 8px", border: `1px solid ${C.greyMid}`, color: C.cyanDim, fontFamily: "monospace", letterSpacing: 1 }}>
               {tag}
@@ -318,7 +360,7 @@ function Navbar() {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity }}
           style={{ width: 8, height: 8, borderRadius: "50%", background: C.green }} />
-        <span style={{ fontFamily: "monospace", fontSize: 12, color: C.cyan, letterSpacing: 3 }}>UNIT-01 // ONLINE</span>
+        <span style={{ fontFamily: "monospace", fontSize: 12, color: C.cyan, letterSpacing: 3 }}>PORTFOLIO // ONLINE</span>
       </div>
       <div style={{ display: "flex", gap: "2rem" }}>
         {sections.map(s => (
@@ -335,11 +377,12 @@ function Navbar() {
 
 // ── SECTIONS ──────────────────────────────────────────────────────────────────
 const techStack = [
-  { module: "CORE.LANG", items: ["Python", "JavaScript", "C++", "Java"] },
+  { module: "CORE.LANG", items: ["Python", "C++","",""] },
   { module: "AI.ENGINE", items: ["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV"] },
-  { module: "IOT.PROTOCOL", items: ["LoRa / LoRaWAN", "MQTT", "Arduino", "Raspberry Pi"] },
+  { module: "IOT.PROTOCOL", items: ["HTTP", "MQTT"] },
+  { module: "HW.BOARDS", items: ["Raspberry Pi 4", "ESP32", "Arduino"] },
   { module: "WEB.LAYER", items: ["React", "Node.js", "REST API", "FastAPI"] },
-  { module: "DATA.CORE", items: ["MySQL", "MongoDB", "Firebase", "Pandas"] },
+  { module: "DATA.CORE", items: ["MySQL", "InfluxDB", "Pandas"] },
   { module: "TOOLS.ENV", items: ["Git", "Docker", "Linux", "VS Code"] },
 ];
 
@@ -349,30 +392,42 @@ const missions = [
     description: "IoT-integrated waste bin monitoring with real-time fill-level detection, ML-based route optimization, and cloud dashboard for municipal management.",
     status: "ACTIVE",
     tags: ["IoT", "LoRa", "Python", "MQTT", "ML"],
+    image: "public/projects/Smart-Traffic-Light.jpeg",
   },
   {
     title: "LORA RESEARCH NODE",
     description: "Long-range wireless sensor network research using LoRaWAN. Evaluating coverage, packet loss, and signal propagation in urban environments.",
     status: "ACTIVE",
     tags: ["LoRaWAN", "RF Research", "Arduino", "Data Analysis"],
+    image: "/portofolio/public/projects/lora-node.jpeg",
   },
   {
-    title: "AI VISION CLASSIFIER",
-    description: "Convolutional neural network for real-time object classification deployed on edge devices. Optimized for low-power IoT hardware.",
+    title: "SERSAM Project",
+    description: "An automated river cleaning system utilizing ultrasonic sensors and a motorized conveyor belt to detect and extract waterborne waste.",
     status: "STANDBY",
     tags: ["CNN", "TensorFlow", "Edge AI", "OpenCV"],
+    image: "/portofolio/public/projects/sersam.jpeg",
   },
   {
-    title: "AUTOMATED ENV. MONITOR",
-    description: "Multi-sensor environmental data logger with temperature, humidity, CO2, and particulate matter tracking. Sends alerts via Telegram bot.",
+    title: "Kopling: Smart Bin",
+    description: "An AI-powered smart waste system that transforms everyday waste into circular economy assets, fully integrated with a mobile app ecosystem.",
     status: "COMPLETE",
-    tags: ["Sensors", "Raspberry Pi", "Bot API", "Firebase"],
+    tags: ["Sensors", "Raspberry Pi 4", "MQTT", "Flutter App", "OpenCV"],
+    image: "/portofolio/public/projects/kopling.jpeg",
+  },
+  {
+    title: "Smart Traffic Light",
+    description: "Intelligent traffic light system with real-time adaptive control based on vehicle and pedestrian flow.",
+    status: "COMPLETE",
+    tags: ["Sensors", "ESP32CAM", "MySQL", "HTTP Server"],
+    image: "/portofolio/public/projects/Smart-Traffic-Light.jpeg",
   },
 ];
 
 const labLog = [
-  { year: "2023–NOW", title: "AI & IoT Laboratory Assistant", org: "Informatics Department", desc: "Assisting researchers with hardware prototyping, sensor calibration, and data pipeline automation for smart environment projects." },
-  { year: "2024", title: "Research Collaborator — LoRa Coverage Study", org: "Wireless Comm. Lab", desc: "Co-authored field research measuring LoRaWAN signal propagation across campus. Responsible for node deployment and dataset analysis." },
+  { year: "2026–NOW", title: "AI & Robotics", org: "Organization division", desc: "Assisting researchers with hardware prototyping, sensor calibration, and data pipeline automation for smart environment projects." },
+  { year: "2026-NOW", title: "AI Instructor", org: "Teaching Instructor", desc: "Teaching artificial intelligence concepts and applications to undergraduate students." },
+  { year: "2026-NOW", title: "Operating System Instructor", org: "Teaching Instructor", desc: "Teaching Operating System concepts and applications to undergraduate students." },
 ];
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
@@ -441,7 +496,7 @@ export default function Portfolio() {
               style={{ fontSize: "clamp(2.4rem, 5vw, 4rem)", fontWeight: 700, color: C.white, lineHeight: 1.1, marginBottom: "1rem", letterSpacing: -1 }}>
               {"< INFORMATICS"}
               <br />
-              <span style={{ color: C.cyan }}>ENGINEER /&gt;</span>
+              <span style={{ color: C.cyan }}>STUDENT /&gt;</span>
             </motion.h1>
 
             <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.9, duration: 0.8 }}
@@ -472,7 +527,7 @@ export default function Portfolio() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7, duration: 1 }}>
-            <RobotMascot scrollY={scrollY} />
+            <ProfileHUD scrollY={scrollY} />
           </motion.div>
         </div>
 
@@ -488,17 +543,28 @@ export default function Portfolio() {
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <SectionHeader label="02" title="SYS.MODULES" subtitle="Installed technology stack" />
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem", marginTop: "3rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.5rem", marginTop: "3rem", alignItems: "stretch" }}>
             {techStack.map((mod, i) => (
               <motion.div key={mod.module}
                 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}>
-                <PlateBox label={mod.module} glowOnHover>
-                  {mod.items.map(item => (
-                    <div key={item} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0", fontSize: 13, color: C.text }}>
-                      <span style={{ color: C.cyan, fontSize: 8 }}>◆</span> {item}
-                    </div>
-                  ))}
+                transition={{ delay: i * 0.08 }}
+                style={{ height: "100%" }} /* <-- KUNCI 1: Memaksa bungkus animasi merenggang */
+              >
+                <PlateBox 
+                  label={mod.module} 
+                  glowOnHover 
+                  style={{ height: "100%", boxSizing: "border-box" }} /* <-- KUNCI 2: Memaksa PlateBox mengisi penuh ruang */
+                >
+                  {mod.items.map((item, index) => {
+                    // <-- KUNCI 3: Mencegah render jika string kosong ("") atau cuma spasi (" ")
+                    if (!item || item.trim() === "") return null; 
+                    
+                    return (
+                      <div key={index} style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0", fontSize: 13, color: C.text }}>
+                        <span style={{ color: C.cyan, fontSize: 8 }}>◆</span> {item}
+                      </div>
+                    );
+                  })}
                 </PlateBox>
               </motion.div>
             ))}
@@ -511,11 +577,14 @@ export default function Portfolio() {
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <SectionHeader label="03" title="ACTIVE MISSIONS" subtitle="Hover over a mission to run diagnostics" />
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", marginTop: "3rem" }}>
+          {/* Tambah alignItems: "stretch" di baris ini */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", marginTop: "3rem", alignItems: "stretch" }}>
             {missions.map((mission, i) => (
               <motion.div key={mission.title}
                 initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}>
+                transition={{ delay: i * 0.1 }}
+                style={{ height: "100%" }} /* <-- Tambah height: 100% di sini */
+              >
                 <ProjectCard mission={mission} />
               </motion.div>
             ))}
