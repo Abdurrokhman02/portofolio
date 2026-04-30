@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import profileImg from "./assets/profile.jpg";
 import { image } from "framer-motion/client";
+import imgSmartTraffic from "./assets/projects/Smart-Traffic-Light.jpeg";
+import imgSersam from "./assets/projects/sersam.jpeg";
+import imgKopling from "./assets/projects/kopling.jpeg";
 
 // ── PALETTE ──────────────────────────────────────────────────────────────────
 const C = {
@@ -392,35 +395,35 @@ const missions = [
     description: "IoT-integrated waste bin monitoring with real-time fill-level detection, ML-based route optimization, and cloud dashboard for municipal management.",
     status: "ACTIVE",
     tags: ["IoT", "LoRa", "Python", "MQTT", "ML"],
-    image: "public/projects/Smart-Traffic-Light.jpeg",
+    image: imgSmartTraffic,
   },
   {
     title: "LORA RESEARCH NODE",
     description: "Long-range wireless sensor network research using LoRaWAN. Evaluating coverage, packet loss, and signal propagation in urban environments.",
     status: "ACTIVE",
     tags: ["LoRaWAN", "RF Research", "Arduino", "Data Analysis"],
-    image: "/portofolio/public/projects/lora-node.jpeg",
+    image: imgSmartTraffic,
   },
   {
     title: "SERSAM Project",
     description: "An automated river cleaning system utilizing ultrasonic sensors and a motorized conveyor belt to detect and extract waterborne waste.",
     status: "STANDBY",
     tags: ["CNN", "TensorFlow", "Edge AI", "OpenCV"],
-    image: "/portofolio/public/projects/sersam.jpeg",
+    image: imgSersam,
   },
   {
     title: "Kopling: Smart Bin",
     description: "An AI-powered smart waste system that transforms everyday waste into circular economy assets, fully integrated with a mobile app ecosystem.",
     status: "COMPLETE",
     tags: ["Sensors", "Raspberry Pi 4", "MQTT", "Flutter App", "OpenCV"],
-    image: "/portofolio/public/projects/kopling.jpeg",
+    image: imgKopling,
   },
   {
     title: "Smart Traffic Light",
     description: "Intelligent traffic light system with real-time adaptive control based on vehicle and pedestrian flow.",
     status: "COMPLETE",
     tags: ["Sensors", "ESP32CAM", "MySQL", "HTTP Server"],
-    image: "/portofolio/public/projects/Smart-Traffic-Light.jpeg",
+    image: imgSmartTraffic,
   },
 ];
 
