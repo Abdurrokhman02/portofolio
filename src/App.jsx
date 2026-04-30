@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import profileImg from "./assets/profile.jpg";
+import cvFile from "./assets/CV_ATS_Abdurrokhman.pdf";
 import { image } from "framer-motion/client";
 import imgSmartTraffic from "./assets/projects/Smart-Traffic-Light.jpeg";
 import imgSersam from "./assets/projects/sersam.jpeg";
@@ -356,7 +357,7 @@ function Navbar() {
     return () => clearInterval(t);
   }, []);
 
-  const sections = ["INIT", "SYS.MODULES", "MISSIONS", "LOG"];
+  const sections = ["INIT", "SYS.MODULES", "MISSIONS", "LOG", "CONTACT"];
   return (
     <motion.nav initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8 }}
       style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(5,10,15,0.92)", borderBottom: `1px solid ${C.greyMid}`, backdropFilter: "blur(10px)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2rem", height: 56 }}>
@@ -431,6 +432,27 @@ const labLog = [
   { year: "2026–NOW", title: "AI & Robotics", org: "Organization division", desc: "Assisting researchers with hardware prototyping, sensor calibration, and data pipeline automation for smart environment projects." },
   { year: "2026-NOW", title: "AI Instructor", org: "Teaching Instructor", desc: "Teaching artificial intelligence concepts and applications to undergraduate students." },
   { year: "2026-NOW", title: "Operating System Instructor", org: "Teaching Instructor", desc: "Teaching Operating System concepts and applications to undergraduate students." },
+];
+
+const contactList = [
+  { 
+    platform: "LINKEDIN", 
+    value: "Abdurrokhman", 
+    url: "https://www.linkedin.com/in/abdurrokhman-bin-ano/",
+    icon: "IN" 
+  },
+  { 
+    platform: "GITHUB", 
+    value: "abdurrokhman02", 
+    url: "https://github.com/abdurrokhman02", 
+    icon: "GIT" 
+  },
+  { 
+    platform: "WHATSAPP", 
+    value: "Secure Chat", 
+    url: "https://wa.me/", 
+    icon: "WA" 
+  },
 ];
 
 // ── MAIN APP ──────────────────────────────────────────────────────────────────
@@ -512,11 +534,42 @@ export default function Portfolio() {
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3 }}
               style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-              {["DOWNLOAD CV", "VIEW MISSIONS", "CONTACT"].map((btn, i) => (
-                <motion.button key={btn} whileHover={{ scale: 1.04, borderColor: C.cyan }} whileTap={{ scale: 0.97 }}
-                  style={{ padding: "10px 20px", background: i === 0 ? C.cyan : "transparent", color: i === 0 ? C.bg : C.cyan, border: `1px solid ${C.cyan}`, fontSize: 11, letterSpacing: 3, cursor: "pointer", fontFamily: "monospace", fontWeight: 600 }}>
-                  {btn}
-                </motion.button>
+              {[
+                { label: "DOWNLOAD CV", href: cvFile, isDownload: true }, // <-- Pakai variabel cvFile dan tambah penanda isDownload
+                { label: "VIEW MISSIONS", href: "#MISSIONS" },
+                { label: "CONTACT", href: "#CONTACT" }
+              ].map((btn, i) => (
+                <motion.a 
+                  key={btn.label} 
+                  href={btn.href}
+                  // Jika tombol ini adalah tombol download, tambahkan atribut download
+                  download={btn.isDownload ? "CV_Abdurrahman.pdf" : undefined}
+                  onClick={(e) => {
+                    // Munculkan konfirmasi HANYA untuk tombol download
+                    if (btn.isDownload) {
+                      const confirmDownload = window.confirm("Apakah Anda ingin mengunduh CV ini?");
+                      if (!confirmDownload) {
+                        e.preventDefault(); // Batalkan unduhan jika ditekan 'Cancel'
+                      }
+                    }
+                  }}
+                  whileHover={{ scale: 1.04, borderColor: C.cyan }} 
+                  whileTap={{ scale: 0.97 }}
+                  style={{ 
+                    padding: "10px 20px", 
+                    background: i === 0 ? C.cyan : "transparent", 
+                    color: i === 0 ? C.bg : C.cyan, 
+                    border: `1px solid ${C.cyan}`, 
+                    fontSize: 11, 
+                    letterSpacing: 3, 
+                    cursor: "pointer", 
+                    fontFamily: "monospace", 
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    display: "inline-block"
+                  }}>
+                  {btn.label}
+                </motion.a>
               ))}
             </motion.div>
 
@@ -618,6 +671,41 @@ export default function Portfolio() {
                     </div>
                   </div>
                 </PlateBox>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CONTACT ── */}
+      <section id="CONTACT" style={{ padding: "6rem 2rem", position: "relative" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <SectionHeader label="05" title="SECURE.COMMS" subtitle="Establish a direct connection" />
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem", marginTop: "3rem", alignItems: "stretch" }}>
+            {contactList.map((contact, i) => (
+              <motion.div key={contact.platform}
+                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                style={{ height: "100%" }}
+              >
+                {/* Bungkus dengan tag <a> agar bisa diklik */}
+                <a href={contact.url} target="_blank" rel="noreferrer" style={{ textDecoration: "none", display: "block", height: "100%" }}>
+                  <PlateBox glowOnHover style={{ height: "100%", display: "flex", alignItems: "center", gap: "1.5rem", cursor: "pointer", boxSizing: "border-box" }}>
+                    
+                    {/* Kotak Ikon */}
+                    <div style={{ width: 50, height: 50, border: `1px solid ${C.cyanDim}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: C.cyan, fontFamily: "monospace", background: "rgba(0,245,255,0.05)" }}>
+                      {contact.icon}
+                    </div>
+                    
+                    {/* Teks Kontak */}
+                    <div>
+                      <div style={{ fontSize: 10, letterSpacing: 3, color: C.cyanDim, marginBottom: 4 }}>{contact.platform}</div>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: C.white, fontFamily: "monospace", letterSpacing: 1 }}>{contact.value}</div>
+                    </div>
+
+                  </PlateBox>
+                </a>
               </motion.div>
             ))}
           </div>
