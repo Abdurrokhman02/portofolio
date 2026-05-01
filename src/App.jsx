@@ -6,6 +6,8 @@ import { image } from "framer-motion/client";
 import imgSmartTraffic from "./assets/projects/Smart-Traffic-Light.jpeg";
 import imgSersam from "./assets/projects/sersam.jpeg";
 import imgKopling from "./assets/projects/kopling.jpeg";
+import imgWatering from "./assets/projects/watering.jpeg";
+import imgRoboticArm from "./assets/projects/arm.jpeg";
 
 // ── PALETTE ──────────────────────────────────────────────────────────────────
 const C = {
@@ -451,34 +453,34 @@ function Navbar() {
 // ── SECTIONS ──────────────────────────────────────────────────────────────────
 const techStack = [
   { module: "CORE.LANG", items: ["Python", "C++","",""] },
-  { module: "AI.ENGINE", items: ["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV"] },
+  { module: "AI.ENGINE", items: ["Scikit-learn", "OpenCV"] },
   { module: "IOT.PROTOCOL", items: ["HTTP", "MQTT"] },
   { module: "HW.BOARDS", items: ["Raspberry Pi 4", "ESP32", "Arduino"] },
-  { module: "WEB.LAYER", items: ["React", "Node.js", "REST API", "FastAPI"] },
+  { module: "WEB.LAYER", items: ["React", "Node.js", "REST API", "Streamlit"] },
   { module: "DATA.CORE", items: ["MySQL", "InfluxDB", "Pandas"] },
   { module: "TOOLS.ENV", items: ["Git", "Docker", "Linux", "VS Code"] },
 ];
 
 const missions = [
   {
-    title: "SMART WASTE SYSTEM",
-    description: "IoT-integrated waste bin monitoring with real-time fill-level detection, ML-based route optimization, and cloud dashboard for municipal management.",
-    status: "ACTIVE",
-    tags: ["IoT", "LoRa", "Python", "MQTT", "ML"],
-    image: imgSmartTraffic,
+    title: "Robotics Arm",
+    description: "A versatile robotic arm equipped with multiple degrees of freedom",
+    status: "PENDING",
+    tags: ["ESP32", "Servo Motors"],
+    image: imgRoboticArm,
   },
   {
-    title: "LORA RESEARCH NODE",
-    description: "Long-range wireless sensor network research using LoRaWAN. Evaluating coverage, packet loss, and signal propagation in urban environments.",
-    status: "ACTIVE",
-    tags: ["LoRaWAN", "RF Research", "Arduino", "Data Analysis"],
-    image: imgSmartTraffic,
+    title: "Automatic Plant Watering System ",
+    description: "An automated plant watering system using soil moisture sensors and an ESP32 microcontroller to maintain optimal hydration levels for indoor plants.",
+    status: "COMPLETE",
+    tags: ["ESP32"],
+    image: imgWatering,
   },
   {
     title: "SERSAM Project",
     description: "An automated river cleaning system utilizing ultrasonic sensors and a motorized conveyor belt to detect and extract waterborne waste.",
-    status: "STANDBY",
-    tags: ["CNN", "TensorFlow", "Edge AI", "OpenCV"],
+    status: "COMPLETE",
+    tags: ["ESP32", "Ultrasonic", "HTTP"],
     image: imgSersam,
   },
   {
