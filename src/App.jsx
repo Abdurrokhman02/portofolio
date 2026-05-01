@@ -350,6 +350,8 @@ function ProjectCard({ mission }) {
 // ── NAVBAR ────────────────────────────────────────────────────────────────────
 function Navbar() {
   const [time, setTime] = useState("");
+  const [isOpen, setIsOpen] = useState(false); // State untuk buka/tutup menu HP
+
   useEffect(() => {
     const tick = () => setTime(new Date().toLocaleTimeString("en-US", { hour12: false }));
     tick();
@@ -358,24 +360,91 @@ function Navbar() {
   }, []);
 
   const sections = ["INIT", "SYS.MODULES", "MISSIONS", "LOG", "CONTACT"];
+
   return (
-    <motion.nav initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8 }}
-      style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(5,10,15,0.92)", borderBottom: `1px solid ${C.greyMid}`, backdropFilter: "blur(10px)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2rem", height: 56 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity }}
-          style={{ width: 8, height: 8, borderRadius: "50%", background: C.green }} />
-        <span style={{ fontFamily: "monospace", fontSize: 12, color: C.cyan, letterSpacing: 3 }}>PORTFOLIO // ONLINE</span>
-      </div>
-      <div style={{ display: "flex", gap: "2rem" }}>
-        {sections.map(s => (
-          <a key={s} href={`#${s}`} style={{ fontFamily: "monospace", fontSize: 11, color: C.textDim, textDecoration: "none", letterSpacing: 2 }}
-            onMouseEnter={e => e.target.style.color = C.cyan}
-            onMouseLeave={e => e.target.style.color = C.textDim}
-          >{s}</a>
-        ))}
-      </div>
-      <span style={{ fontFamily: "monospace", fontSize: 11, color: C.textDim, letterSpacing: 2 }}>{time}</span>
-    </motion.nav>
+    <>
+      <motion.nav initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8 }}
+        style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(5,10,15,0.92)", borderBottom: `1px solid ${C.greyMid}`, backdropFilter: "blur(10px)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2rem", height: 56 }}>
+        
+        {/* Logo Kiri */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <motion.div animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity }}
+            style={{ width: 8, height: 8, borderRadius: "50%", background: C.green }} />
+          <span style={{ fontFamily: "monospace", fontSize: 12, color: C.cyan, letterSpacing: 3 }}>PORTFOLIO // ONLINE</span>
+        </div>
+
+        {/* Menu Desktop (Disembunyikan saat di HP via CSS) */}
+        <div className="nav-desktop-links">
+          {sections.map(s => (
+            <a key={s} href={`#${s}`} style={{ fontFamily: "monospace", fontSize: 11, color: C.textDim, textDecoration: "none", letterSpacing: 2 }}
+              onMouseEnter={e => e.target.style.color = C.cyan}
+              onMouseLeave={e => e.target.style.color = C.textDim}
+            >{s}</a>
+          ))}
+        </div>
+
+        {/* Jam & Tombol Hamburger */}
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <span className="nav-time" style={{ fontFamily: "monospace", fontSize: 11, color: C.textDim, letterSpacing: 2 }}>{time}</span>
+          
+          <button 
+            className="hamburger-btn" 
+            onClick={() => setIsOpen(!isOpen)}
+            style={{ fontFamily: "monospace", transition: "all 0.3s" }}
+          >
+            {/* Ubah ikon jadi silang kalau menu sedang terbuka */}
+            {isOpen ? "✕" : "☰"}
+          </button>
+        </div>
+      </motion.nav>
+
+      {/* ── DROPDOWN MENU MOBILE ── */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              position: "fixed",
+              top: 56, // Muncul persis di bawah Navbar
+              left: 0,
+              right: 0,
+              background: "rgba(5,10,15,0.95)",
+              borderBottom: `1px solid ${C.cyanDim}`,
+              backdropFilter: "blur(10px)",
+              zIndex: 99,
+              display: "flex",
+              flexDirection: "column",
+              padding: "1rem 2rem",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.8)"
+            }}
+          >
+            {sections.map(s => (
+              <a 
+                key={s} 
+                href={`#${s}`} 
+                onClick={() => setIsOpen(false)} // Otomatis tutup menu kalau link diklik
+                style={{ 
+                  fontFamily: "monospace", 
+                  fontSize: 14, 
+                  color: C.cyan, 
+                  textDecoration: "none", 
+                  letterSpacing: 3,
+                  padding: "1.2rem 0",
+                  borderBottom: `1px solid ${C.greyMid}`,
+                  textAlign: "center",
+                  fontWeight: 600
+                }}
+              >
+                [ {s} ]
+              </a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -471,6 +540,8 @@ export default function Portfolio() {
     "WELCOME.",
   ];
 
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     let i = 0;
     const t = setInterval(() => {
@@ -509,9 +580,14 @@ export default function Portfolio() {
       <Navbar />
 
       {/* ── HERO ── */}
+      {/* ── HERO ── */}
       <section id="INIT" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "80px 2rem 2rem", position: "relative" }}>
-        <div style={{ maxWidth: 1100, width: "100%", display: "grid", gridTemplateColumns: "1fr auto", gap: "4rem", alignItems: "center" }}>
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "easeOut" }}>
+        
+        {/* Panggil class CSS-nya di sini */}
+        <div className="hero-container">
+          
+          {/* BAGIAN TEKS */}
+          <motion.div className="hero-text-wrapper" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: "easeOut" }}>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
               style={{ fontSize: 11, letterSpacing: 5, color: C.cyanDim, textTransform: "uppercase", marginBottom: "1rem" }}>
               ◈ SYSTEM IDENTITY CONFIRMED
@@ -524,49 +600,35 @@ export default function Portfolio() {
               <span style={{ color: C.cyan }}>STUDENT /&gt;</span>
             </motion.h1>
 
-            <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.9, duration: 0.8 }}
-              style={{ height: 1, background: `linear-gradient(90deg, ${C.cyan}, transparent)`, marginBottom: "1.5rem", transformOrigin: "left" }} />
+            <motion.div className="hero-divider" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.9, duration: 0.8 }} />
 
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
               style={{ fontSize: 15, color: C.textDim, lineHeight: 1.8, maxWidth: 520, marginBottom: "2rem" }}>
               Specializing in <span style={{ color: C.cyan }}>Artificial Intelligence</span> and <span style={{ color: C.green }}>Internet of Things</span>. Building smart systems that bridge the physical and digital world.
             </motion.p>
 
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3 }}
-              style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+            {/* Tombol Aksi */}
+            <motion.div className="hero-actions" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3 }} style={{ gap: "1rem" }}>
               {[
-                { label: "DOWNLOAD CV", href: cvFile, isDownload: true }, // <-- Pakai variabel cvFile dan tambah penanda isDownload
+                { label: "DOWNLOAD CV", href: cvFile, isDownload: true }, 
                 { label: "VIEW MISSIONS", href: "#MISSIONS" },
                 { label: "CONTACT", href: "#CONTACT" }
               ].map((btn, i) => (
                 <motion.a 
                   key={btn.label} 
                   href={btn.href}
-                  // Jika tombol ini adalah tombol download, tambahkan atribut download
                   download={btn.isDownload ? "CV_Abdurrahman.pdf" : undefined}
                   onClick={(e) => {
-                    // Munculkan konfirmasi HANYA untuk tombol download
                     if (btn.isDownload) {
                       const confirmDownload = window.confirm("Apakah Anda ingin mengunduh CV ini?");
-                      if (!confirmDownload) {
-                        e.preventDefault(); // Batalkan unduhan jika ditekan 'Cancel'
-                      }
+                      if (!confirmDownload) e.preventDefault(); 
                     }
                   }}
                   whileHover={{ scale: 1.04, borderColor: C.cyan }} 
                   whileTap={{ scale: 0.97 }}
                   style={{ 
-                    padding: "10px 20px", 
-                    background: i === 0 ? C.cyan : "transparent", 
-                    color: i === 0 ? C.bg : C.cyan, 
-                    border: `1px solid ${C.cyan}`, 
-                    fontSize: 11, 
-                    letterSpacing: 3, 
-                    cursor: "pointer", 
-                    fontFamily: "monospace", 
-                    fontWeight: 600,
-                    textDecoration: "none",
-                    display: "inline-block"
+                    padding: "10px 20px", background: i === 0 ? C.cyan : "transparent", color: i === 0 ? C.bg : C.cyan, border: `1px solid ${C.cyan}`, 
+                    fontSize: 11, letterSpacing: 3, cursor: "pointer", fontFamily: "monospace", fontWeight: 600, textDecoration: "none", display: "inline-block"
                   }}>
                   {btn.label}
                 </motion.a>
@@ -574,17 +636,19 @@ export default function Portfolio() {
             </motion.div>
 
             {/* Status bar */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }}
-              style={{ marginTop: "2rem", display: "flex", gap: "2rem", fontSize: 10, color: C.textDim, letterSpacing: 2 }}>
+            <motion.div className="hero-status" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }}
+              style={{ marginTop: "2rem", gap: "2rem", fontSize: 10, color: C.textDim, letterSpacing: 2 }}>
               {[["STATUS", "ONLINE"], ["MODE", "BUILD"], ["LAB", "ACTIVE"]].map(([k, v]) => (
                 <div key={k}>{k}: <span style={{ color: C.cyan }}>{v}</span></div>
               ))}
             </motion.div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7, duration: 1 }}>
+          {/* BAGIAN FOTO HUD */}
+          <motion.div className="hero-image-wrapper" initial={{ opacity: 0, x: 60 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7, duration: 1 }}>
             <ProfileHUD scrollY={scrollY} />
           </motion.div>
+
         </div>
 
         {/* Scroll indicator */}

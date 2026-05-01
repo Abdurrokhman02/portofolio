@@ -113,3 +113,97 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* --- CSS UNTUK RESPONSIVE HERO SECTION --- */
+.hero-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4rem;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero-text-wrapper {
+  flex: 1;
+  text-align: left;
+}
+
+.hero-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, #00F5FF, transparent);
+  margin-bottom: 1.5rem;
+  transform-origin: left;
+}
+
+.hero-actions, .hero-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.hero-image-wrapper {
+  transform: scale(1);
+}
+
+/* === KETIKA DIBUKA DI HP (Layar di bawah 768px) === */
+@media (max-width: 768px) {
+  .hero-container {
+    flex-direction: column-reverse; /* Ini yang bikin foto otomatis naik ke atas! */
+    gap: 1rem;
+  }
+  .hero-text-wrapper {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-divider {
+    background: linear-gradient(90deg, transparent, #00F5FF, transparent);
+    transform-origin: center;
+    width: 80%; /* Garisnya agak memendek biar elegan */
+  }
+  .hero-actions, .hero-status {
+    justify-content: center;
+  }
+  .hero-image-wrapper {
+    transform: scale(0.65); /* Ngecilin ukuran fotomu 35% biar ga luber di HP */
+    margin-top: -3rem;
+    margin-bottom: -5rem;
+  }
+}
+
+/* --- CSS UNTUK NAVBAR RESPONSIVE --- */
+.nav-desktop-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-time {
+  display: block;
+}
+
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: #00F5FF;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 101;
+}
+
+/* === KETIKA DIBUKA DI HP (Layar di bawah 768px) === */
+@media (max-width: 768px) {
+  .nav-desktop-links {
+    display: none; /* Sembunyikan menu teks di HP */
+  }
+  .nav-time {
+    display: none; /* Sembunyikan jam di HP biar ga sempit */
+  }
+  .hamburger-btn {
+    display: block; /* Munculkan ikon hamburger (☰) */
+  }
+}
